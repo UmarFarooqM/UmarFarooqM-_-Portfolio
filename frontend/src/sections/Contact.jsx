@@ -715,29 +715,48 @@ const Contact = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/contact/add`, formData);
-      if (res.status === 200) {
-        setIsError(false);
-        setStatusMessage("✅ Message sent successfully!");
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
-      } else throw new Error("Failed to send message.");
-    } catch (err) {
+  e.preventDefault();
+  setLoading(true);
+  
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/contact/add`, formData);
+
+    // Log the full response for debugging (you can remove later)
+    console.log("Response from backend:", res);
+
+    // ✅ More reliable success check
+    if (res.data?.success) {
+      setIsError(false);
+      setStatusMessage("✅ Message sent successfully!");
+
+      // Reset form fields
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } else {
+      // Handle backend returned error
       setIsError(true);
-      setStatusMessage("❌ Something went wrong. Please try again later.");
-    } finally {
-      setLoading(false);
-      setTimeout(() => setStatusMessage(""), 5000);
+      setStatusMessage(`❌ ${res.data?.error || "Failed to send message."}`);
     }
-  };
+  } catch (err) {
+    // Log the exact backend error
+    console.error("Contact form error:", err.response?.data || err.message);
+
+    // Display proper error
+    setIsError(true);
+    setStatusMessage(
+      `❌ ${err.response?.data?.error || "Something went wrong. Please try again later."}`
+    );
+  } finally {
+    setLoading(false);
+    setTimeout(() => setStatusMessage(""), 5000);
+  }
+};
+
 
   const contactInfo = [
     { icon: HiMail, label: "Email", value: personal.email, href: `mailto:${personal.email}` },
