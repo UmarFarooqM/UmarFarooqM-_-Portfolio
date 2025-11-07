@@ -718,7 +718,7 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("https://portfolio-oqh7.onrender.com/contact/add", formData);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/contact/add`, formData);
       if (res.status === 200) {
         setIsError(false);
         setStatusMessage("✅ Message sent successfully!");
