@@ -1,12 +1,21 @@
-let mongoose = require ('mongoose');
-require ('dotenv').config ();
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-let connectToDb = async () => {
+const connectToDb = async () => {
   try {
-    await mongoose.connect (process.env.MONGODB_URI);
-    console.log ('Connected to Db');
+    // ✅ Add safe connection options for production
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 10000, // Wait up to 10 seconds
+    });
+
+    console.log("✅ MongoDB connected successfully!");
   } catch (error) {
-    console.log ('Database connection error:', error.message);
+    console.error("❌ Database connection error:", error.message);
+
+    // Optional: exit process if connection fails (important for Render)
+    process.exit(1);
   }
 };
 
