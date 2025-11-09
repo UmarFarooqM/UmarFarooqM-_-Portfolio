@@ -1,32 +1,40 @@
+// server.js
+require("dotenv").config(); // ✅ Load environment variables first
+
 const express = require("express");
 const cors = require("cors");
-const connectToDb = require("./configs/db");
+const connectToDB = require("./configs/db");
 const contactRouter = require("./routes/contactRoutes");
-require("dotenv").config();
 
 const app = express();
+
+// ✅ Middleware
 app.use(express.json());
 app.use(cors());
 
-const PORT = process.env.PORT || 3000;
+// ✅ Connect to MongoDB
+connectToDB();
 
-// ✅ Connect to database first, then start the server
-connectToDb().then(() => {
-  // test route
-  app.get("/test", (req, res) => {
-    res.status(200).json({ message: "Test Route is Working" });
+// ✅ Port setup
+const PORT = process.env.PORT || 5000;
+
+// ✅ Test route for quick check
+app.get("/test", (req, res) => {
+  res.status(200).json({
+    message: "✅ Local Test Route is Working",
+    timestamp: new Date().toISOString(),
   });
+});
 
-  // contact routes
-  app.use("/contact", contactRouter);
+// ✅ Contact routes
+app.use("/api/contact", contactRouter);
 
-  // unhandled route
-  app.use((req, res) => {
-    res.status(404).json({ message: "404, Route not found" });
-  });
+// ✅ 404 fallback route
+app.use((req, res) => {
+  res.status(404).json({ message: "404, Route is not found...." });
+});
 
-  // start server after DB is ready
-  app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-  });
+// ✅ Start the server
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on port ${PORT}`);
 });

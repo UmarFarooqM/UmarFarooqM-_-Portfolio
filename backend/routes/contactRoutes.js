@@ -1,9 +1,10 @@
-let express  = require("express");
+// routes/contactRoutes.js
+const express = require("express");
 const { addContact } = require("../controllers/contactControllers");
 
-let contactRouter = express.Router()
+const contactRouter = express.Router();
 
-// add contact 
-contactRouter.post("/add",addContact)
+// POST route to handle form submission
+contactRouter.post("/add", addContact);
 
-module.exports = contactRouter ;
+module.exports = contactRouter;
